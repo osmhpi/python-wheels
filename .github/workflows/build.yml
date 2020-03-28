@@ -1,0 +1,114 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create draft release
+        uses: actions/github-script@0.9.0
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const fs = require('fs');
+
+            const release = await github.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: new Date().toISOString().replace(/[T:]/g, '-').split('.')[0],
+              target_commitish: context.sha,
+              draft: true,
+              prerelease: true,
+            });
+
+            fs.mkdirSync('release-info');
+            fs.writeFileSync('release-info/release.json', JSON.stringify({
+              id: release.data.id,
+              upload_url: release.data.upload_url,
+            }));
+
+      - name: Upload release-info
+        uses: actions/upload-artifact@v1
+        with:
+          name: release-info
+          path: release-info
+
+  build:
+    name: ${{ matrix.wheel }}
+    runs-on: ubuntu-latest
+    needs: release
+    container:
+      image: debian:10
+
+    strategy:
+      matrix:
+        wheel:
+          - ns-3
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Execute ${{ matrix.wheel }}/build.sh
+        run: exec ${{ matrix.wheel }}/build.sh
+
+      - name: Download release-info
+        uses: actions/download-artifact@v1
+        with:
+          name: release-info
+
+      - name: Upload ${{ matrix.wheel }}
+        uses: actions/github-script@0.9.0
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const fs = require('fs');
+
+            const release = JSON.parse(fs.readFileSync('release-info/release.json'), 'utf8');
+            const path = process.env.ASSET_PATH;
+            const name = process.env.ASSET_NAME;
+            const data = fs.readFileSync(path);
+
+            await github.repos.uploadReleaseAsset({
+              url: release.upload_url,
+              headers: {
+                'content-type': 'application/zip',
+                'content-length': data.length,
+              },
+              name,
+              data,
+            });
+
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Download release-info
+        uses: actions/download-artifact@v1
+        with:
+          name: release-info
+
+      - name: Publish release
+        uses: actions/github-script@0.9.0
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const fs = require('fs');
+
+            const release = JSON.parse(fs.readFileSync('release-info/release.json'), 'utf8');
+
+            await github.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: release.id,
+              draft: false,
+            });
