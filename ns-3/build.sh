@@ -113,6 +113,8 @@ run python3 -m wheel unpack -d patch "dist/ns-$NS3_VERSION-py3-none-any.whl"
 
 ns3_patch="patch/ns-$NS3_VERSION"
 
+run rm -r "$ns3_patch/ns/_/lib/python3"
+
 for f in "$ns3_patch"/ns/*.so; do
 	run patchelf --set-rpath '$ORIGIN/_/lib' "$f";
 done
