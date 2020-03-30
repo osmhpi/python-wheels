@@ -124,6 +124,10 @@ for f in "$ns3_patch"/ns/_/bin/*; do
 	run chmod +x "$f";
 done
 
+for f in "$ns3_patch"/ns/_/lib/*.so; do
+	run patchelf --set-rpath '$ORIGIN' "$f";
+done
+
 run mkdir dist2
 run python3 -m wheel pack -d dist2 "$ns3_patch"
 
