@@ -57,7 +57,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Execute ${{ matrix.wheel }}/build.sh
-        run: exec ${{ matrix.wheel }}/build.sh
+        run: exec ./github-action-build.sh ${{ matrix.wheel }}/build.sh
 
       - name: Download release-info
         uses: actions/download-artifact@v1
@@ -72,19 +72,27 @@ jobs:
             const fs = require('fs');
 
             const release = JSON.parse(fs.readFileSync('release-info/release.json'), 'utf8');
-            const path = process.env.ASSET_PATH;
-            const name = process.env.ASSET_NAME;
-            const data = fs.readFileSync(path);
 
-            await github.repos.uploadReleaseAsset({
-              url: release.upload_url,
-              headers: {
-                'content-type': 'application/zip',
-                'content-length': data.length,
-              },
-              name,
-              data,
-            });
+            for (let i = 0; ; i++) {
+              const path = process.env[`ASSET_PATH_${i}`];
+              if (!path) {
+                break;
+              }
+
+              const name = process.env[`ASSET_NAME_${i}`];
+              const data = fs.readFileSync(path);
+
+              console.log(`Upload ${name}: ${path} (${data.length} bytes)`);
+              await github.repos.uploadReleaseAsset({
+                url: release.upload_url,
+                headers: {
+                  'content-type': 'application/zip',
+                  'content-length': data.length,
+                },
+                name,
+                data,
+              });
+            }
 
   publish:
     name: Publish

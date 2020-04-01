@@ -1,46 +1,7 @@
-#!/bin/sh -e
-
-section() {
-	echo "##[section]$@"
-}
-
-set_env() {
-	echo "$1=$2"
-	echo "::set-env name=$1::$2"
-}
-
-command() {
-	echo "##[command]$@"
-	"$@"
-}
-
-workdir() {
-	if [ ! -d "$1" ]; then
-		command mkdir -p "$1"
-	fi
-	command cd "$1"
-}
-
-run() {
-	echo "##[group]$@"
-	local code=0
-	("$@") || code=$?
-	echo "##[endgroup]"
-	return $code
-}
-
-runsh() {
-	echo "##[group]$1"
-	local code=0
-	(sh -c "$1") || code=$?
-	echo "##[endgroup]"
-	return $code
-}
-
 repo="$PWD"
 base="$repo/ns-3"
 
-section ---------------- Install ----------------
+section ---------------- install ----------------
 run apt-get update
 run apt-get install -y --no-install-recommends \
 	bzip2 \
@@ -131,10 +92,8 @@ done
 run mkdir dist2
 run python3 -m wheel pack -d dist2 "$ns3_patch"
 
-asset_name="ns-$NS3_VERSION-cp37-cp37m-linux_x86_64.whl"
-asset_path="$base/$asset_name"
+asset_path="$base/ns-$NS3_VERSION-cp37-cp37m-linux_x86_64.whl"
 run cp "dist2/ns-$NS3_VERSION-py3-none-any.whl" "$asset_path"
 
-section ---------------- done ----------------
-set_env ASSET_PATH "$asset_path"
-set_env ASSET_NAME "$asset_name"
+section ---------------- asset ----------------
+asset "$asset_path"
