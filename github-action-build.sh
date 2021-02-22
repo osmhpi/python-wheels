@@ -6,7 +6,7 @@ section() {
 
 set_env() {
 	echo "$1=$2"
-	echo "::set-env name=$1::$2"
+	echo "$1=$2" >> $GITHUB_ENV
 }
 
 command() {
