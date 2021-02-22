@@ -49,8 +49,6 @@ run tar xj --strip-components 1 -f ../ns-3.tar.bz2
 
 
 section ---------------- NetAnim ----------------
-run patch -p 1 -i "$base/netanim_python_$NS3_VERSION.patch"
-
 workdir netanim-*
 run qmake NetAnim.pro
 run make -j $(nproc)
