@@ -43,7 +43,7 @@ ns3_download_sha1=d20b5ca146975f202655c1940db57f53c9f574a1
 
 section ---------------- download ----------------
 workdir /opt/ns-3
-run curl -L -o ../ns-3.tar.bz2 https://github.com/osmhpi/python-wheels/releases/download/cache/ns-allinone-$NS3_VERSION.tar.bz2
+run curl -L -o ../ns-3.tar.bz2 https://www.nsnam.org/releases/ns-allinone-$NS3_VERSION.tar.bz2
 runsh "echo '${ns3_download_sha1} ../ns-3.tar.bz2' | sha1sum -c"
 run tar xj --strip-components 1 -f ../ns-3.tar.bz2
 
