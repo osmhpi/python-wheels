@@ -22,20 +22,6 @@ run apt-get install -y --no-install-recommends \
 	zip \
 	&& true
 
-
-run pip3 install \
-	cxxfilt \
-	git+https://github.com/felix-gohla/pygccxml@v1.9.2 \
-	&& true
-
-section ---------------- CastXML ----------------
-workdir /opt/castxml
-run git clone --branch v0.2.0 --depth 1 https://github.com/CastXML/CastXML.git .
-run test "$(git rev-parse HEAD)" = 5ba47e3b67c4a9070e8404ed2db4d16c52e4267b
-run cmake .
-run make -j $(nproc)
-run make install
-
 export NS3_VERSION=3.33
 
 # 3.33
@@ -56,7 +42,6 @@ run make -j $(nproc)
 section ---------------- ns-3 ----------------
 workdir "/opt/ns-3/ns-$NS3_VERSION"
 run ./waf configure
-run ./waf --apiscan=netanim && \
 
 workdir "/opt/ns-3"
 run ./build.py -- install --destdir=/ns-3-build
