@@ -36,10 +36,10 @@ run cmake .
 run make -j $(nproc)
 run make install
 
-export NS3_VERSION=3.30
+export NS3_VERSION=3.33
 
-# 3.30
-ns3_download_sha1=b4d40bb9777ee644bdba50e3a2e221da85715b4e
+# 3.33
+ns3_download_sha1=d20b5ca146975f202655c1940db57f53c9f574a1
 
 section ---------------- download ----------------
 workdir /opt/ns-3

@@ -5,10 +5,10 @@ This repository contains python wheels for the simulators used by [cohydra](http
 ## Installation
 
 It so far tested with **Python 3.7**.
-Use the following command to install *ns-3.30* from the wheel:
+Use the following command to install *ns-3.33* from the wheel:
 
 ```
-sudo pip3 install "https://github.com/osmhpi/python-wheels/releases/latest/download/ns-3.30-cp37-cp37m-linux_x86_64.whl"
+sudo pip3 install "https://github.com/osmhpi/python-wheels/releases/latest/download/ns-3.33-cp37-cp37m-linux_x86_64.whl"
 ```
 
 ## Troubleshooting
