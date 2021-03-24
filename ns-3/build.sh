@@ -75,7 +75,7 @@ done
 run mkdir dist2
 run python3 -m wheel pack -d dist2 "$ns3_patch"
 
-asset_path="$base/ns-$NS3_VERSION-cp37-cp37m-linux_x86_64.whl"
+asset_path="$base/ns-$NS3_VERSION-py3-none-linux_x86_64.whl"
 run cp "dist2/ns-$NS3_VERSION-py3-none-any.whl" "$asset_path"
 
 section ---------------- asset ----------------
