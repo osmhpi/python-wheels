@@ -18,7 +18,7 @@ run apt-get install -y --no-install-recommends \
 	python3-pip \
 	python3-setuptools \
 	python3-wheel \
-	qt5-default \
+	qtbase5-dev \
 	zip \
 	&& true
 
